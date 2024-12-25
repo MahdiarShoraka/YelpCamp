@@ -6,18 +6,8 @@ const methodOverride = require("method-override");
 const Campground = require("./models/campground");
 const catchAsync = require("./utilities/catchAsync");
 const ExpressError = require("./utilities/ExpressError");
-const Joi = require("joi");
-const { campgroundSchema } = require("./schemas.js");
-
-mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp", {
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("database connected");
-});
+const { campgroundSchema } = require("./schemas");
+const Review = require("./models/review");
 
 const app = express();
 app.engine("ejs", ejsMate);
@@ -26,13 +16,22 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp", {
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+  console.log("database connected");
+});
+
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
   if (error) {
     const message = error.details.map((el) => el.message).join(",");
     throw new ExpressError(message, 400);
   } else {
-    // if data is valid, call the next middleware (e.g., catchAsync in post)
+    // if data is valid, call the next middleware function (e.g., catchAsync in post)
     next();
   }
 };
@@ -97,6 +96,18 @@ app.delete(
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect("/campgrounds");
+  })
+);
+
+app.post(
+  "/campgrounds/:id/reviews",
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
