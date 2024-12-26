@@ -6,7 +6,7 @@ const methodOverride = require("method-override");
 const Campground = require("./models/campground");
 const catchAsync = require("./utilities/catchAsync");
 const ExpressError = require("./utilities/ExpressError");
-const { campgroundSchema } = require("./schemas");
+const { campgroundSchema, reviewSchema } = require("./schemas");
 const Review = require("./models/review");
 
 const app = express();
@@ -27,6 +27,17 @@ db.once("open", () => {
 
 const validateCampground = (req, res, next) => {
   const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const message = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(message, 400);
+  } else {
+    // if data is valid, call the next middleware function (e.g., catchAsync in post)
+    next();
+  }
+};
+
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
   if (error) {
     const message = error.details.map((el) => el.message).join(",");
     throw new ExpressError(message, 400);
@@ -65,8 +76,10 @@ app.post(
 app.get(
   "/campgrounds/:id",
   catchAsync(async (req, res, next) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render("campgrounds/show", { campground });
+    const campground = await Campground.findById(req.params.id).populate(
+      "reviews"
+    );
+    res.render("campgrounds/show", { campground: campground });
   })
 );
 
@@ -101,6 +114,7 @@ app.delete(
 
 app.post(
   "/campgrounds/:id/reviews",
+  validateReview,
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
@@ -108,6 +122,18 @@ app.post(
     await review.save();
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
+
+app.delete(
+  "/campgrounds/:id/reviews/:reviewId",
+  catchAsync(async (req, res) => {
+    const { reviewId, id } = req.params;
+    await Campground.findByIdAndUpdate(id, {
+      $pull: { reviews: reviewId },
+    });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
   })
 );
 
