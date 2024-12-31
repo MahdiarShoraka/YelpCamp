@@ -34,7 +34,12 @@ router.get(
   "/:id",
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id)
-      .populate("reviews")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+        },
+      })
       .populate("author");
     if (!campground) {
       req.flash("error", "No such campground");
@@ -49,6 +54,8 @@ router.get(
   isLoggedIn,
   isAuthor,
   catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findById(id);
     if (!campground) {
       req.flash("error", "No such campground");
       return res.redirect("/campgrounds");
@@ -63,6 +70,10 @@ router.put(
   isAuthor,
   validateCampground,
   catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, {
+      ...req.body.campground,
+    });
     req.flash("success", "Successfully updated the campground");
     res.redirect(`/campgrounds/${campground._id}`);
   })

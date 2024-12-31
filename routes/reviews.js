@@ -3,7 +3,7 @@ const catchAsync = require("../utilities/catchAsync");
 const Review = require("../models/review");
 const Campground = require("../models/campground");
 const router = express.Router({ mergeParams: true });
-const { validateReview, isLoggedIn } = require("../middleware");
+const { validateReview, isLoggedIn, isReviewAuthor } = require("../middleware");
 
 router.post(
   "/",
@@ -23,6 +23,8 @@ router.post(
 
 router.delete(
   "/:reviewId",
+  isLoggedIn,
+  isReviewAuthor,
   catchAsync(async (req, res) => {
     const { reviewId, id } = req.params;
     await Campground.findByIdAndUpdate(id, {
