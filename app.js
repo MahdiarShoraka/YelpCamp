@@ -53,6 +53,7 @@ db.once("open", () => {
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currentUser = req.user;
   next();
 });
 
@@ -76,5 +77,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
-  console.log("Serving on  localhost:3000...");
+  console.log("Serving on localhost:3000...");
 });

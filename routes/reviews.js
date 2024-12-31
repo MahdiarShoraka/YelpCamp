@@ -1,28 +1,18 @@
 const express = require("express");
 const catchAsync = require("../utilities/catchAsync");
-const ExpressError = require("../utilities/ExpressError");
-const { reviewSchema } = require("../schemas");
 const Review = require("../models/review");
 const Campground = require("../models/campground");
 const router = express.Router({ mergeParams: true });
-
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    const message = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(message, 400);
-  } else {
-    // if data is valid, call the next middleware function (e.g., catchAsync in post)
-    next();
-  }
-};
+const { validateReview, isLoggedIn } = require("../middleware");
 
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
+    review.author = req.user._id;
     campground.reviews.push(review);
     await review.save();
     await campground.save();
