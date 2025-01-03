@@ -11,14 +11,12 @@ const router = express.Router();
 router
   .route("/")
   .get(catchAsync(campgrounds.index))
-  .post(upload.array("image"), (req, res) => {
-    console.log(req.body, req.files);
-  });
-// .post(
-//   isLoggedIn,
-//   validateCampground,
-//   catchAsync(campgrounds.createCampground)
-// );
+  .post(
+    isLoggedIn,
+    upload.array("image"),
+    validateCampground,
+    catchAsync(campgrounds.createCampground)
+  );
 
 router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 // order matters (new before :id)
@@ -29,6 +27,7 @@ router
   .put(
     isLoggedIn,
     isAuthor,
+    upload.array("image"), // multer looks for name="image" in the ejs/html file
     validateCampground,
     catchAsync(campgrounds.updateCampground)
   )
