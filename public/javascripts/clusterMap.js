@@ -1,11 +1,13 @@
 mapboxgl.accessToken = mapToken;
 
 const map = new mapboxgl.Map({
-  container: "map",
+  container: "cluster-map",
   style: "mapbox://styles/mapbox/light-v11",
   center: [-103.5917, 40.6699],
   zoom: 3,
 });
+
+map.addControl(new mapboxgl.NavigationControl());
 
 map.on("load", () => {
   map.addSource("campgrounds", {
@@ -86,10 +88,8 @@ map.on("load", () => {
     // Ensure that if the map is zoomed out such that
     // multiple copies of the feature are visible, the
     // popup appears over the copy being pointed to.
-    if (["mercator", "equirectangular"].includes(map.getProjection().name)) {
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
 
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(popupMarkup).addTo(map);
