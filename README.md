@@ -22,7 +22,7 @@
 - Cloudinary for image storage  
 - Mapbox for interactive maps
 
-**Deployment**
+**Deployment:**  
 The YelpCamp project is deployed using the following services:  
 - Render:  
 The back-end server and application logic are hosted on Render, providing a reliable and scalable platform for the Node.js server.  
