@@ -7,6 +7,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const ExpressError = require("./utilities/ExpressError");
@@ -28,7 +29,22 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 
+const dbUrl = "mongodb://127.0.0.1:27017/yelp-camp";
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret: "thisshouldbeabettersecret!",
+  },
+});
+
+store.on("error", function (e) {
+  console.log("session store error", e);
+});
+
 const sessionConfig = {
+  store,
   name: "session",
   secret: "ThisShouldBeSecret",
   resave: false,
@@ -49,8 +65,9 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp", {});
+//const dbUrl = process.env.DB_URL;
+//mongoose.connect(process.env.DB_URL, {});
+mongoose.connect(dbUrl, {});
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
