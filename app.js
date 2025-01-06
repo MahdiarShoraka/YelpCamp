@@ -32,10 +32,6 @@ app.use(mongoSanitize());
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/yelp-camp";
 const secret = process.env.SECRET || "thisisabackupsecret";
 
-store.on("error", function (e) {
-  console.log("session store error", e);
-});
-
 const sessionConfig = {
   store,
   name: "session",
@@ -72,6 +68,10 @@ const store = MongoStore.create({
   crypto: {
     secret,
   },
+});
+
+store.on("error", function (e) {
+  console.log("session store error", e);
 });
 
 // Flash accessible by all views
