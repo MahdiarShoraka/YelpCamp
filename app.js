@@ -32,22 +32,6 @@ app.use(mongoSanitize());
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/yelp-camp";
 const secret = process.env.SECRET || "thisisabackupsecret";
 
-const sessionConfig = {
-  store,
-  name: "session",
-  secret,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    //secure: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  },
-};
-app.use(session(sessionConfig));
-app.use(flash());
-
 // Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
@@ -69,6 +53,22 @@ const store = MongoStore.create({
     secret,
   },
 });
+
+const sessionConfig = {
+  store,
+  name: "session",
+  secret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    //secure: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+app.use(session(sessionConfig));
+app.use(flash());
 
 store.on("error", function (e) {
   console.log("session store error", e);
