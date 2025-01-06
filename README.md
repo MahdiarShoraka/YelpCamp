@@ -20,7 +20,17 @@
 
 **APIs & Services:**  
 - Cloudinary for image storage  
-- Mapbox for interactive maps  
+- Mapbox for interactive maps
+
+**Deployment**
+The YelpCamp project is deployed using the following services:  
+- Render:  
+The back-end server and application logic are hosted on Render, providing a reliable and scalable platform for the Node.js server.  
+Render manages the deployment process and automates updates with every push to the GitHub repository.
+
+- MongoDB Atlas:  
+A cloud-based MongoDB cluster is used for storing campground data, user accounts, and reviews.  
+The database connection is secured with environment variables configured on Render.  
 
 **Credits and Acknowledgments**  
 This is a course project from
