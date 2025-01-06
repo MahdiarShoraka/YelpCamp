@@ -29,15 +29,8 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(mongoSanitize());
 
-const dbUrl = "mongodb://127.0.0.1:27017/yelp-camp";
-
-const store = MongoStore.create({
-  mongoUrl: dbUrl,
-  touchAfter: 24 * 60 * 60,
-  crypto: {
-    secret: "thisshouldbeabettersecret!",
-  },
-});
+const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/yelp-camp";
+const secret = process.env.SECRET || "thisisabackupsecret";
 
 store.on("error", function (e) {
   console.log("session store error", e);
@@ -46,7 +39,7 @@ store.on("error", function (e) {
 const sessionConfig = {
   store,
   name: "session",
-  secret: "ThisShouldBeSecret",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -65,13 +58,20 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-//const dbUrl = process.env.DB_URL;
-//mongoose.connect(process.env.DB_URL, {});
+
 mongoose.connect(dbUrl, {});
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("database connected");
+});
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret,
+  },
 });
 
 // Flash accessible by all views
