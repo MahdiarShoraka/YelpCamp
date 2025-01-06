@@ -1,4 +1,4 @@
-YelpCamp is a comprehensive full-stack web application that enables users to discover, create, and review campgrounds across the United States. This project showcases proficiency in web development by integrating various technologies and implementing essential features for a dynamic user experience.
+YelpCamp is a comprehensive full-stack web application that enables users to discover, create, and review campgrounds. This project showcases proficiency in web development by integrating various technologies and implementing essential features for a dynamic user experience.
 
 **Features:**
 User Authentication & Authorization: Implemented using Passport.js to manage user registration, login, and access control.
