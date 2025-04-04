@@ -7,8 +7,8 @@ describe("campground_success", function () {
   let driver;
   let vars;
   beforeEach(async function () {
-    driver = await createDriver("firefox");
-    //driver = await createDriver("chrome");
+    //driver = await createDriver("firefox");
+    driver = await createDriver("chrome");
     await driver.get("https://yelpcamp-livg.onrender.com/");
     vars = {};
   });

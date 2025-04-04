@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("test", async ({ page }) => {
+test("login_success", async ({ page }) => {
   await page.goto("https://yelpcamp-livg.onrender.com/");
   await page.getByRole("link", { name: "Login" }).click();
   await page.getByRole("textbox", { name: "Username" }).click();

@@ -6,8 +6,8 @@ describe("campground_review", function () {
   let driver;
   let vars;
   beforeEach(async function () {
-    driver = await createDriver("firefox");
-    //driver = await createDriver("chrome");
+    //driver = await createDriver("firefox");
+    driver = await createDriver("chrome");
     await driver.get("https://yelpcamp-livg.onrender.com/");
     await driver.manage().window().maximize();
     vars = {};
@@ -32,17 +32,14 @@ describe("campground_review", function () {
     await driver.findElement(By.id("description")).click();
     await driver.findElement(By.id("description")).sendKeys("test");
     await driver.findElement(By.css(".btn")).click();
+    await driver.sleep(1000);
     await driver.findElement(By.css("label:nth-child(9)")).click();
     await driver.findElement(By.id("body")).click();
     await driver.findElement(By.id("body")).sendKeys("test");
     await driver.findElement(By.css(".btn-success")).click();
-    await driver.sleep(2000);
-    const element = await driver.wait(
-      until.elementLocated(By.css(".btn-sm")),
-      10000
-    );
-
-    await element.click();
+    await driver.executeScript("window.scrollBy(0, 500);"); // Scroll down by 500 pixels
+    await driver.sleep(1000);
+    await driver.findElement(By.css("#review_delete")).click();
     await driver.findElement(By.css(".btn-danger")).click();
     await driver.findElement(By.linkText("Logout")).click();
   });

@@ -7,8 +7,8 @@ describe("Login", function () {
   let driver;
   beforeEach(async function () {
     vars = {};
-    driver = await createDriver("firefox");
-    //driver = await createDriver("chrome");
+    //driver = await createDriver("firefox");
+    driver = await createDriver("chrome");
     await driver.get("https://yelpcamp-livg.onrender.com/");
   });
   afterEach(async function () {

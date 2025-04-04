@@ -8,9 +8,8 @@ test("test", async ({ page }) => {
   //   width: window.screen.width,
   //   height: window.screen.height,
   // }));
-
   // Set the viewport size to the screen dimensions
-  await page.setViewportSize({ width, height });
+  //await page.setViewportSize({ width, height });
 
   await page.getByRole("link", { name: "Login" }).click();
   await page.getByRole("textbox", { name: "Username" }).click();
