@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const { createDriver } = require("../../selenium-config");
 
 describe("Login", function () {
-  this.timeout(30000);
+  //this.timeout(30000);
   let driver;
   beforeEach(async function () {
     vars = {};
