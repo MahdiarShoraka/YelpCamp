@@ -7,7 +7,11 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-mongoose.connect(process.env.DB_URL);
+mongoose.connect(process.env.DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  tls: true,
+});
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));

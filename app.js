@@ -22,7 +22,11 @@ const MongoStore = require("connect-mongo");
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/yelp-camp";
 const secret = process.env.SECRET || "thisisabackupsecret";
 
-mongoose.connect(dbUrl, {});
+mongoose.connect(dbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  tls: true,
+});
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
